@@ -1,0 +1,541 @@
+package cp.screens;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+import com.google.android.maps.Projection;
+
+import cp.overlays.CustomItemizedOverlay;
+import cp.overlays.PathOverlay;
+
+public class GpsNavScreenActivity extends MapActivity {
+
+	private MapView mapView;
+	private MapController mapController;
+	private LocationManager locManager;
+	private Location interLocation1, interLocation2;
+	private LocationListener locListenerGPS;
+	private LocationListener locListenerNW;	
+	private double fromPtLat, fromPtLong, toPtLat, toPtLong, arrowPtLat, arrowPtLong; 
+	private CharSequence day;
+	private int time;
+	private String url;
+	private GeoPoint fromGeoPt;
+	private GeoPoint toGeoPt;
+	private String fromStr;
+	private String toStr;
+	private GeoPoint arrowGeoPt;
+	private GeoPoint arrowGeoPtOld;
+	private List<Overlay> mapOverlays;
+	private Drawable arrow;
+	private CustomItemizedOverlay itemizedoverlay2;
+	private ArrayList<GeoPoint> cpPointsArr; //swapnil.c
+	private ArrayList<GeoPoint> googlePointsArr;
+	private int countTurnsCrossed;
+	private TextView tvstreetname;
+	private TextView tvmiles;
+	//private Drawable directions[];
+	
+	private Projection projection; //swapnil.c
+	
+	String ptListStr;
+	String streetListStr;
+	String directionInfo[];
+	String direction, nextTurnDirection, nextStreetName, nextMiles;
+	private GeoPoint nextGeoPt;
+	double nextLatitude, nextLongitude;
+	String latitudeTurn, longitudeTurn;
+	Double longitude, latitude;
+	GeoPoint turnPt;
+	Drawable markerDirection;
+	CustomItemizedOverlay[] itemizedoverlayDirection = new CustomItemizedOverlay[20];
+	OverlayItem[] overlayDirection = new OverlayItem[20];
+	int j=0; //noTurns
+	
+	private class HandleHTTP extends AsyncTask<String, String, String> { //swapnil.c
+		@Override
+		protected String doInBackground(String... url) {
+			// TODO Auto-generated method stub
+			String ptListStr="";			
+		    HttpClient httpclient = new DefaultHttpClient(); 
+	        HttpGet request = new HttpGet(url[0]);  
+	        ResponseHandler<String> handler = new BasicResponseHandler();
+	        try{
+	        	ptListStr = httpclient.execute(request, handler);
+	        	return ptListStr;
+	        }
+	        catch (Exception e){
+	        	e.getMessage();
+	        	Log.d("arrivalexec", e.getMessage());
+	        } finally {
+	        	httpclient.getConnectionManager().shutdown();  
+	        }
+			return ptListStr;
+		}
+	}
+	
+	private class mylocationlistener implements LocationListener{ //swapnil.c
+		//R.drwable.arrow (by default) implemented in onCreate
+		//Drawable arrow0 = getApplicationContext().getResources().getDrawable(R.drawable.arrow0);
+		//Drawable arrow1 = getApplicationContext().getResources().getDrawable(R.drawable.arrow1);
+		//CustomItemizedOverlay itemizedoverlay2 = new CustomItemizedOverlay(arrow0, GpsNavScreenActivity.this);
+		//CustomItemizedOverlay itemizedoverlay3 = new CustomItemizedOverlay(arrow1, GpsNavScreenActivity.this);
+
+	public void onLocationChanged(Location location) {
+			// TODO Auto-generated method stub
+	        if (location != null) {
+	        	arrowPtLat = location.getLatitude();
+	        	arrowPtLong = location.getLongitude();
+	        	
+	            Log.d("LOCATION CHANGED", location.getLatitude() + "");
+	            Log.d("LOCATION CHANGED", location.getLongitude() + "");
+	            Toast.makeText(getApplicationContext(),
+	                location.getLatitude() + "" + location.getLongitude(),
+	                Toast.LENGTH_LONG).show();
+	            //swapnil.c
+	            arrowGeoPt = new GeoPoint(Double.valueOf(arrowPtLat * 1E6).intValue(),Double.valueOf(arrowPtLong * 1E6).intValue());
+	        	if(arrowGeoPt!=null) //swapnil.c: this shd work
+	        	{
+	        		mapController.animateTo(arrowGeoPt);
+	        	}
+	            
+	    		if(arrowGeoPt!=null){
+		            //int itemIndex = mapOverlays.indexOf(itemizedoverlay2);
+		            //if(itemIndex>0) //swapnil.c
+		            //	mapOverlays.remove(itemIndex);
+		            
+	    			OverlayItem overlaycurrent = new OverlayItem(arrowGeoPt, "Current: ", "curloc");
+    				itemizedoverlay2.emptyOverlays();
+    				mapController.animateTo(arrowGeoPt);
+    				//mapView.invalidate();
+    				mapController.animateTo(arrowGeoPt);
+    				itemizedoverlay2.addOverlay(overlaycurrent);
+    				mapOverlays.add(itemizedoverlay2);
+    				//mapView.invalidate();
+	    			//if(count==0) {
+		    			//mapOverlays.remove(itemizedoverlay3);
+	    				//itemizedoverlay2.addOverlay(overlaycurrent);
+	    				//mapOverlays.add(itemizedoverlay2);
+	    				//count += 1;
+	    			//}
+	    			//else {
+	    			//mapOverlays.remove(itemizedoverlay2);
+	    				//itemizedoverlay3.addOverlay(overlaycurrent);
+	    				//mapOverlays.add(itemizedoverlay3);
+	    				//count = 0;
+	    			//}
+	    			//mapView.postInvalidate();
+	    			
+		            //call google webservice
+		            //googlePointsArr = new NavScreenActivity().getPointsFromGoogle(arrowGeoPt, toGeoPt);
+    				
+    				
+    				//call cp service
+		            cpPointsArr = new NavScreenActivity().getPointsFromClearPath(arrowGeoPt, toGeoPt, time, true);
+		            
+		            //if(!(arrowGeoPt.equals(googlePointsArr.get(0))))
+		            arrowGeoPt = cpPointsArr.get(0);
+		            	//arrowGeoPt = googlePointsArr.get(0);
+		            mapController.animateTo(arrowGeoPt);
+		            OverlayItem overlaycurrent2 = new OverlayItem(arrowGeoPt, "Current: ", "curloc");
+	    			mapOverlays.remove(mapOverlays.indexOf(itemizedoverlay2));
+		            //mapOverlays.clear(); //swapnil.c : clear the complete map: issue of replicating arrow icon
+	    			//mapView.invalidate();
+	    			
+    				itemizedoverlay2.addOverlay(overlaycurrent2);
+    				mapOverlays.add(itemizedoverlay2);
+    				//try {
+    				//mapView.wait(100);
+    				//} catch(Exception e){
+    				//	e.printStackTrace();
+    				//}
+		            //mapView.postInvalidate();
+	        		mapController.setCenter(arrowGeoPt);
+    				mapController.animateTo(arrowGeoPt);
+    				//mapView.postInvalidate();
+    				mapView.invalidate();
+	    		}	
+	        }
+		}
+
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+	
+	class MyOverlay extends Overlay{
+		private GeoPoint gpback, gpforward, gpcenter;
+		
+		public MyOverlay(){
+			try{
+				ptListStr = (new HandleHTTP().doInBackground(url));
+			} catch (Exception e){
+				e.getMessage();
+				Log.d("arrivalexec", e.getMessage());
+			}
+			
+		}
+		public void draw(Canvas canvas, MapView mapv, boolean shadow){
+				 super.draw(canvas, mapv, shadow);
+	
+				 //mapview projection
+				 projection = mapView.getProjection();
+				 
+				 //Configuring the paint brush
+				 Paint mPaint = new Paint();
+				 mPaint.setDither(true);
+				 mPaint.setColor(Color.BLUE);
+				 mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+				 mPaint.setStrokeJoin(Paint.Join.ROUND);
+				 mPaint.setStrokeCap(Paint.Cap.ROUND);
+				 mPaint.setStrokeWidth(15);
+				 
+				 Paint mPaintRed = new Paint();
+				 mPaintRed.setDither(true);
+				 mPaintRed.setColor(Color.RED);
+				 mPaintRed.setStyle(Paint.Style.FILL_AND_STROKE);
+				 mPaintRed.setStrokeJoin(Paint.Join.ROUND);
+				 mPaintRed.setStrokeCap(Paint.Cap.ROUND);
+				 mPaintRed.setStrokeWidth(15);
+			
+					streetListStr = ptListStr.split("@")[1];
+					directionInfo = streetListStr.split(",");
+					int length = directionInfo.length;
+					int indexTurnPt;
+					double r, thetaSlope;
+					Point h1 = new Point(0,0); //forming x- axis
+					Point h2 = new Point(10,0); //forming x- axis
+					Path ph = new Path();
+					double angleArrow = (Math.PI/6.0);
+									
+				if(true || arrowGeoPt == null //swapnil.c 
+					|| (arrowGeoPt!=null && (arrowGeoPtOld==null || (arrowGeoPt.equals(arrowGeoPtOld)==false)))){
+					if(arrowGeoPt != null)
+						mapController.animateTo(arrowGeoPt);
+					for(int i = countTurnsCrossed*5; i < length; i+=5){
+						gpcenter = null;
+						gpforward = null;
+						gpback = null;
+						
+						j=i/5;
+						direction = directionInfo[i];
+						longitudeTurn = directionInfo[i+2].toString();
+						latitudeTurn = directionInfo[i+3].toString();
+						
+						longitude = new Double(Double.valueOf(longitudeTurn).doubleValue());
+						latitude = new Double(Double.valueOf(latitudeTurn).doubleValue());
+						turnPt = new GeoPoint(Double.valueOf(latitude * 1E6).intValue(),Double.valueOf(longitude * 1E6).intValue());
+						
+						if(arrowGeoPt != null && arrowGeoPt.equals(turnPt)) { //draw remaining turns only
+							countTurnsCrossed += 1; //increment turn count
+							i+=5;
+						}
+						if(i == countTurnsCrossed*5 )
+						{
+							nextTurnDirection = directionInfo[i];
+							nextStreetName = directionInfo[i+1];
+							nextLatitude = latitude;
+							nextLongitude = longitude;
+							nextGeoPt = turnPt;
+							nextMiles = directionInfo[i+4];
+						}
+				
+						
+						indexTurnPt = cpPointsArr.indexOf(turnPt);
+						
+						if(indexTurnPt<0) //swapnil.c : skip that turn point as not in direction list
+							continue;
+						
+						gpcenter = cpPointsArr.get(indexTurnPt);
+						if(indexTurnPt!=0)
+							gpback = cpPointsArr.get(indexTurnPt-1);
+						if(indexTurnPt+1 != cpPointsArr.size())
+							gpforward = cpPointsArr.get(indexTurnPt+1); 
+						
+						
+						Point p1 = new Point(); //start_line
+						Point p2 = new Point(); //turnPt_intersection
+						Point p3 = new Point(); //end_arrow
+						Path path1 = new Path(); //line
+						Path path2 = new Path(); //arrow
+						
+						Point p4 = new Point(); //arrowIncLeft
+						Point p5 = new Point(); //arrowIncRight
+						Point p6 = new Point(); //arrowIncCenter
+						
+						Path path3 = new Path(); //arrowIncLeft
+						Path path4 = new Path(); //arrowIncRight
+						
+						
+						//direction arrow
+						if(gpback != null)
+							projection.toPixels(gpback, p1);
+						if(gpcenter != null)
+							projection.toPixels(gpcenter, p2);
+						if(gpforward != null)
+							projection.toPixels(gpforward, p3);
+						
+						
+						if(gpback != null && gpcenter != null) {
+							path1.moveTo(p2.x, p2.y); //Moving to center
+							path1.lineTo((p1.x+p2.x)/2, (p1.y+p2.y)/2); //line till intersection
+						}
+						if(gpforward != null && gpcenter != null) {
+							path2.moveTo(p2.x, p2.y); //move to intersection
+							path2.lineTo((p2.x+p3.x)/2, (p2.y+p3.y)/2); //arrow
+						}
+						
+						//if(i == (length-5))
+						//{
+							//arrow center
+							p6.x = (p2.x+p3.x)/2;
+							p6.y = (p2.y+p3.y)/2;
+							
+							r = (Math.sqrt(Math.pow(p6.x-p2.x, 2.0)+Math.pow(p6.y-p2.y, 2.0)))/3; // 1/4 of length of line
+							
+							if((p6.x-p2.x) != 0)
+								thetaSlope = Math.atan(((double)(p6.y-p2.y)*1.0)/((double)(p6.x-p2.x)*1.0));
+							else
+								if(p6.y > p2.y)
+									thetaSlope = (Math.PI)/2; //pi/2
+								else
+									thetaSlope = (Math.PI)*1.5; //3pi/2
+							
+							if(p6.x < p2.x) //going left 
+								thetaSlope += Math.PI;
+							
+							p4.x = (int) (p6.x - r*(Math.cos(thetaSlope - angleArrow)));
+							p4.y = (int) (p6.y - r*(Math.sin(thetaSlope - angleArrow)));
+							
+							p5.x = (int) (p6.x - r*(Math.cos(thetaSlope + angleArrow)));
+							p5.y = (int) (p6.y - r*(Math.sin(thetaSlope + angleArrow)));
+							
+							path3.moveTo(p6.x, p6.y);
+							path3.lineTo(p4.x, p4.y);
+							
+							path4.moveTo(p6.x, p6.y);
+							path4.lineTo(p5.x, p5.y);
+							
+							canvas.drawPath(path3, mPaint);
+							canvas.drawPath(path4, mPaint);
+							
+							/*Path pxaxis = new Path();
+							pxaxis.moveTo(0, 0);
+							pxaxis.lineTo(100,0);
+							
+							Path nxaxis = new Path();
+							nxaxis.moveTo(0, 0);
+							nxaxis.lineTo(-100, 0);
+							
+							Path pyaxis = new Path();
+							pyaxis.moveTo(0,0);
+							pyaxis.lineTo(0, 100);
+							
+							Path nyaxis = new Path();
+							nyaxis.moveTo(0, 0);
+							nyaxis.lineTo(0, -100);
+							*/
+
+							
+						//}
+						canvas.drawPath(path1, mPaint);
+						canvas.drawPath(path2, mPaint);
+						//canvas.drawPath(pxaxis, mPaintRed);
+						//canvas.drawPath(nxaxis, mPaintRed);
+						//canvas.drawPath(pyaxis, mPaintRed);
+						//canvas.drawPath(nyaxis, mPaintRed);
+				    }
+				}
+				//swapnil.c: for optimization : check whether arrowGeoPt has been updated or not then only execute for loop
+					arrowGeoPtOld = arrowGeoPt;
+					
+					//for calculating remaining miles to next turn
+					float distanceNextTurn = 0, distanceTotal=0; //distance in miles
+					int nextTurnFound=0;
+					if(arrowGeoPt!=null && cpPointsArr != null) {
+						int startIndex = cpPointsArr.indexOf(arrowGeoPt);
+						interLocation1 = new Location("inter1");
+						interLocation2 = new Location("inter2");
+						for(int i=startIndex; (i+1)<(cpPointsArr.size()); i++){
+							interLocation1.setLatitude((double)((cpPointsArr.get(i)).getLatitudeE6())*1E-6);
+							interLocation1.setLongitude((double)((cpPointsArr.get(i)).getLongitudeE6())*1E-6);
+	
+							interLocation2.setLatitude((double)((cpPointsArr.get(i+1)).getLatitudeE6())*1E-6);
+							interLocation2.setLongitude((double)((cpPointsArr.get(i+1)).getLongitudeE6())*1E-6);
+	
+								distanceTotal += (interLocation1.distanceTo(interLocation2))/1609.34;
+							if(nextTurnFound==0)
+								distanceNextTurn += (interLocation1.distanceTo(interLocation2))/1609.34;
+							if((cpPointsArr.get(i)).equals(nextGeoPt))
+								nextTurnFound=1;
+						}
+					}
+					//sets streetname
+					tvstreetname.setText(nextStreetName);
+					//sets miles
+					//tvmiles.setText(nextMiles + " miles");
+					//if((Float.toString(distanceNextTurn)).length() > 0)
+						tvmiles.setText("Distance  Total:"+ (Float.toString(distanceTotal)) + " miles       Next Turn: " + (Float.toString(distanceNextTurn)) + " miles");
+					
+					BitmapFactory.Options options = new BitmapFactory.Options();
+		            options.inPurgeable = true;
+					//sets turn image
+	                if((nextTurnDirection.compareTo("F")== 0) || (nextTurnDirection.compareTo("N")== 0))
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.straight, options), 0, 0 , null);             
+	                else if((nextTurnDirection.compareTo("W")== 0) || (nextTurnDirection.compareTo("L")==0))
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.left_turn, options), 0, 0 , null);
+	                else if((nextTurnDirection.compareTo("E")== 0) || (nextTurnDirection.compareTo("R")==0))
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.right_turn, options), 0, 0 , null);
+	                else if(nextTurnDirection.compareTo("SL")== 0)
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.sleft_turn, options), 0, 0 , null);
+	                else if(nextTurnDirection.compareTo("SR")== 0)
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.sright_turn, options), 0, 0 , null);
+	                else if(nextTurnDirection.compareTo("M")== 0)
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.merge, options), 0, 0 , null);
+	                else if(nextTurnDirection.contains("M-VLR"))
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.left_ramp, options), 0, 0 , null);
+	                else if(nextTurnDirection.contains("EXIT"))
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.exit, options), 0, 0 , null);
+	                else
+	                	canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.straight, options), 0, 0 , null);
+	                
+	                
+	                
+		}
+	}
+	
+		
+	@Override
+	protected void onCreate(Bundle arg0) {
+		// TODO Auto-generated method stub
+		super.onCreate(arg0);
+		
+		//set content layout from gps_nav_screen.xml file (/res/layout)
+		setContentView(R.layout.gps_nav_screen);
+		
+		//get location update for the very first time
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	    LocationListener ll = new mylocationlistener();
+	    //lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 10, ll); //100 millis and 10 mtr
+	    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, ll); //update frequently 0 millis and 0 mtr
+	    
+	    //Get the current location in start-up //swapnil.c
+	    /*arrowGeoPt = new GeoPoint((int)(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()*1000000),
+	     (int)(lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()*1000000));
+	    
+	    if(arrowGeoPt!=null)
+	    	mapController.animateTo(arrowGeoPt);*/
+	    
+	    countTurnsCrossed=0; //in starting no turns crossed
+	    
+	    tvstreetname = (TextView) findViewById(R.id.textView1);
+	    tvmiles = (TextView) findViewById(R.id.textView2);
+	    
+    	Intent intent = getIntent();
+    	url = intent.getStringExtra("url");
+    	fromPtLat = intent.getDoubleExtra("fromPtLat", 0);
+    	fromPtLong = intent.getDoubleExtra("fromPtLong", 0);
+    	toPtLat = intent.getDoubleExtra("toPtLat", 0);
+    	toPtLong = intent.getDoubleExtra("toPtLong", 0); 
+    	time = intent.getIntExtra("time", 0);
+    	day = intent.getCharSequenceExtra("day");
+    	fromStr = intent.getStringExtra("fromStr");
+    	toStr = intent.getStringExtra("toStr");
+    	
+		mapView = (MapView) findViewById(R.id.gpsMapView);
+    	mapView.setBuiltInZoomControls(true);
+        mapController = mapView.getController();
+        mapController.setZoom(20);	//swapnil.c
+        
+     	
+    	fromGeoPt = new GeoPoint(Double.valueOf(fromPtLat * 1E6).intValue(),Double.valueOf(fromPtLong * 1E6).intValue());
+    	toGeoPt = new GeoPoint(Double.valueOf(toPtLat * 1E6).intValue(),Double.valueOf(toPtLong * 1E6).intValue());
+    	
+    	mapView = (MapView) findViewById(R.id.gpsMapView);
+    	mapView.setBuiltInZoomControls(true);
+    	mapOverlays = mapView.getOverlays();
+    	mapController = mapView.getController();
+		mapOverlays.clear();
+		
+        Drawable endmarker = getApplicationContext().getResources().getDrawable(R.drawable.marker);
+        CustomItemizedOverlay itemizedoverlay1 = new CustomItemizedOverlay(endmarker, GpsNavScreenActivity.this);
+		    
+		cpPointsArr = new NavScreenActivity().getPointsFromClearPath(fromGeoPt, toGeoPt, time, true);
+		PathOverlay clearPath = new PathOverlay(cpPointsArr, Color.GREEN);
+		mapOverlays.add(clearPath);
+		
+		OverlayItem overlayto = new OverlayItem(toGeoPt, "To Address: ", toStr);
+		itemizedoverlay1.addOverlay(overlayto);
+		mapOverlays.add(itemizedoverlay1);
+		
+		//adding arrows
+		MyOverlay myoverlay = new MyOverlay();
+		mapOverlays.add(myoverlay);
+		
+		//mapController.animateTo(new GeoPoint(Double.valueOf(34.0522 * 1E6).intValue(),Double.valueOf(-118.2428 * 1E6).intValue()));
+        mapController.animateTo(fromGeoPt);
+        //mapController.setZoom(20);	//swapnil.c        
+
+        arrow = getApplicationContext().getResources().getDrawable(R.drawable.arrow);
+        itemizedoverlay2 = new CustomItemizedOverlay(arrow, GpsNavScreenActivity.this);
+        
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		android.os.Process.killProcess(android.os.Process.myPid());
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}

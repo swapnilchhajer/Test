@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/navscreenlayout" >
+    
+	<com.google.android.maps.MapView
+       	android:id="@+id/mapview"
+       	android:layout_width="fill_parent"
+       	android:layout_height="fill_parent"
+       	android:apiKey="0QBgEJOOS8c-GWJ7FgL7r5LJOi74tOHGBPf9CMA"
+       	android:clickable="true" 
+       	android:layout_centerInParent="true">
+    </com.google.android.maps.MapView>
+    	
+    <Button 
+        android:id="@+id/gobutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/editfrom"
+        android:layout_alignBottom="@+id/editto"
+        android:layout_marginRight="5dip"
+        android:textStyle="bold"
+        android:text="@string/gobutton"/>
+        
+    <AutoCompleteTextView
+    	android:id="@id/editfrom"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_toLeftOf="@id/gobutton"
+    	android:text="@string/mylocationtext"
+    	android:selectAllOnFocus="true"
+    	android:singleLine="true"
+    	android:hint="@string/fromhint"
+    	android:layout_marginTop="5dip"
+    	android:layout_marginLeft="5dip"/>
+
+    <AutoCompleteTextView
+        android:id="@id/editto"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+        android:layout_alignRight="@id/editfrom"
+        android:layout_marginLeft="5dip"
+        android:singleLine="true"
+    	android:hint="@string/tohint"
+        android:layout_below="@id/editfrom"
+        android:selectAllOnFocus="true"/>
+    
+    <TextView 
+        android:id="@+id/tvgoogtime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall" 
+        android:text="Google Travel Time: N/A"
+        android:layout_alignParentBottom="true"
+        android:textColor="@android:color/white"
+        android:background="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/tvcptime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvgoogtime"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/black"
+        android:layout="@id/tvgoogtime"
+        android:text="ClearPath Travel Time: N/A"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/white"
+        android:padding="2dp" />
+
+    <Button
+        android:id="@+id/routebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvcptime"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold"
+        android:text="@string/routebutton" />
+
+    <Button
+        android:id="@+id/navigatebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvcptime"
+        android:layout_alignParentLeft="true"
+        android:text="Navigate" />
+	    
+</RelativeLayout>
+	
+
+    	
+		
+
+

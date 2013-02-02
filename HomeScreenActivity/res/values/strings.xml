@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, NavScreenActivity!</string>
+    <string name="app_name">ClearPath1</string>
+    <string name="fromhint">From</string>
+	<string name="tohint">To</string>
+	<string name="mylocationtext">My Location</string>
+	<string name="gobutton">Go</string>
+	<string name="menu_selectday">Select Day</string>
+	<string name="menu_picktime">Departure Time</string>
+	<string name="set_home">Set Home</string>
+    <string name="set_work">Set Work</string>
+    <string name="clear_rec">Clear Recents</string>
+    <string name="favaddbutton">Add</string>
+    <string name="favaddhint">Search Favorite</string>
+    <string name="add_fav">Add Favorite</string>
+    <string name="clear_fav">Clear Favorites</string>
+    <string name="menu_daytime">Departure Time</string>
+    <string name="day_prompt">Choose Day</string>
+    <string-array name="day_array">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+    <string name="routebutton">Route</string>
+</resources>

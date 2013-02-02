@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/favmaplayout" >
+    
+	<com.google.android.maps.MapView
+       	android:id="@+id/favmapview"
+       	android:layout_width="fill_parent"
+       	android:layout_height="fill_parent"
+       	android:clickable="true"
+       	android:apiKey="03NvzffM8-Bc46htb5tTTYJfjq_hzU-ZpbXB1lg"
+       	android:layout_centerInParent="true">
+    </com.google.android.maps.MapView>
+    	
+    <Button 
+        android:id="@+id/favaddbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/favaddedit"
+        android:layout_marginRight="5dip"
+        android:textStyle="bold"
+        android:text="@string/favaddbutton" />"
+        
+    <AutoCompleteTextView 
+    	android:id="@id/favaddedit"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_toLeftOf="@id/favaddbutton"
+    	android:selectAllOnFocus="true"
+    	android:singleLine="true"
+    	android:hint="@string/favaddhint"
+    	android:layout_marginTop="5dip"
+    	android:layout_marginLeft="5dip"/>
+    	    
+</RelativeLayout>
+	
+
+    	
+		
+
+

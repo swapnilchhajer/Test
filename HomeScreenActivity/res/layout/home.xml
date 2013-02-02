@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageButton
+            android:id="@+id/imButtonDrive"
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/drive_icon" 
+            android:hapticFeedbackEnabled="true"/>
+
+        <ImageButton
+            android:id="@+id/imageButtonFav"
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/imButtonDrive"
+            android:layout_marginRight="60dp"
+            android:src="@drawable/fav_icon"
+            android:hapticFeedbackEnabled="true" />
+
+        <ImageButton
+            android:id="@+id/imButtonHome"
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_alignRight="@+id/imButtonDrive"
+            android:layout_below="@+id/imButtonDrive"
+            android:layout_marginTop="72dp"
+            android:src="@drawable/home_icon" 
+            android:hapticFeedbackEnabled="true"/>
+
+        <ImageButton
+            android:id="@+id/imButtonWork"
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_alignBottom="@+id/imButtonHome"
+            android:layout_alignRight="@+id/imageButtonFav"
+            android:src="@drawable/work_icon" 
+            android:hapticFeedbackEnabled="true"/>
+
+        <ImageButton
+            android:id="@+id/imButtonRecent"
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_alignRight="@+id/imButtonHome"
+            android:layout_below="@+id/imButtonHome"
+            android:layout_marginTop="76dp"
+            android:src="@drawable/recent_icon"
+            android:hapticFeedbackEnabled="true" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/imButtonDrive"
+            android:layout_below="@+id/imButtonDrive"
+            android:layout_marginTop="15dp"
+            android:text="Drive To"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textColor="@android:color/black"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView1"
+            android:layout_alignBottom="@+id/textView1"
+            android:layout_alignRight="@+id/imageButtonFav"
+            android:text="Favorites"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textColor="@android:color/black"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/imButtonHome"
+            android:layout_below="@+id/imButtonHome"
+            android:layout_marginTop="16dp"
+            android:text="To Home"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black" 
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView3"
+            android:layout_alignBottom="@+id/textView3"
+            android:layout_alignRight="@+id/imButtonWork"
+            android:text="To Work"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textColor="@android:color/black"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_below="@+id/imButtonRecent"
+            android:text="Recent"
+            android:textAppearance="?android:attr/textAppearanceMedium" 
+            android:textColor="@android:color/black"
+            android:textStyle="bold"/>
+
+		<TextView
+		    android:id="@+id/titletv"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentTop="true"
+		    android:background="#006400"
+		    android:gravity="bottom"
+		    android:paddingLeft="5dp"
+		    android:text="ClearPath"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textSize="40dp"
+		    android:textColor="@android:color/white"
+		    android:textStyle="bold"/>"
+
+    </RelativeLayout>
+
+</LinearLayout>

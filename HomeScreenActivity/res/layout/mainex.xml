@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+	<RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    	
+    	<Button 
+    	    android:id="@+id/gobutton"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignParentRight="true"
+    	    android:layout_alignParentTop="true"
+    	    android:layout_alignBottom="@+id/editto"
+    	    android:text="@string/gobutton" />
+	    
+    	<EditText
+    	    android:id="@+id/editfrom"
+    	    android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content"
+    	    android:layout_toLeftOf="@id/gobutton"
+    	    android:text="@string/mylocationtext"
+    	    android:hint="@string/fromhint"
+    	    android:selectAllOnFocus="true" />
+
+    	<EditText
+    	    android:id="@id/editto"
+    	    android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignRight="@id/editfrom"
+    	    android:hint="@string/tohint"
+    	    android:layout_below="@id/editfrom"
+    	    android:selectAllOnFocus="true" />
+    	
+    </RelativeLayout>
+	
+	<LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" >
+    	
+		<com.google.android.maps.MapView
+        	android:id="@+id/mapview"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:apiKey="0ouxpuZ7doIaGjAb_SxGtoPeOni2n5o7etioKjQ"
+        	android:clickable="true" >
+    	</com.google.android.maps.MapView>
+    </LinearLayout>
+    
+</LinearLayout>
